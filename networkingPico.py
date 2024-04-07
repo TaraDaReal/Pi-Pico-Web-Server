@@ -45,7 +45,7 @@ def preload_cache(htmldir: str):
     try:
         for filename in os.listdir(htmldir):
             if filename.endswith(".html"):
-                with open(os.path.join(htmldir, filename), 'r') as f:
+                with open(f"{htmldir}/{filename}", 'r') as f:
                     cache_html(filename, f.read())
     except OSError as e:
         print("Error preloading cache: ", e)
@@ -68,16 +68,17 @@ def is_connected():
         return False
     
 def connectToWifi(skipCheck=False):
+    global ssid, passwd
     if not skipCheck:
         if not is_connected():
             print("Connecting to wifi")
             while not is_connected():
-                wifi.radio.connect(ssid, passwd)
+                wifi.radio.connect(ssid.encode('utf-8'), passwd.encode('utf-8'))
                 time.sleep(2)
             print(f"Connected to {ssid}")
             return
         return
-    wifi.radio.connect(ssid, passwd)
+    wifi.radio.connect(ssid.encode('utf-8'), passwd.encode('utf-8'))
 
 
 @server.route("/")
@@ -90,11 +91,14 @@ def changeLED(request: Request):
     print(raw_text)
     if "TOGGLE" in raw_text:
         led.value = not led.value
-        return Response(request, serve_html('index.html', {'state': led.value}), content_type='text/html')
+        if led.value:
+            return Response(request, serve_html('index.html', {'state': 'ON'}), content_type='text/html')
+        elif not led.value:
+            return Response(request, serve_html('index.html', {'state': 'OFF'}), content_type='text/html')
     if "STOP_PICO" in raw_text:
         stopChip()
     if "username=admin" in raw_text and "password=admin" in raw_text:
-        return Response(request, serve_html('index.html', {'state': led.value}), content_type='text/html')
+        return Response(request, serve_html('index.html', {'state': 'OFF'}), content_type='text/html')
         
     return Response(request, serve_html('login.html', {'state': led.value}), content_type='text/html')
 
@@ -104,6 +108,7 @@ def stopChip():
     sys.exit()
 
 connectToWifi(True)
+preload_cache("./webpage")
 
 print("Starting server")
 
