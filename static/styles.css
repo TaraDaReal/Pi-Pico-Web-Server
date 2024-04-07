@@ -1,0 +1,97 @@
+/* styles.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #3333FF; /* Dark blue */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background-color: #ffffff; /* White */
+    border: 2px solid #000000; /* Black border */
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 250px; /* Width of the rectangle */
+    height: 350px; /* Three times taller than the width */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+}
+
+.button {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 10px;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.button:hover {
+    background-color: #45a049;
+}
+
+/* Adjusting the style for the STOP button */
+.stop-button {
+    background-color: #ff3333; /* Red */
+}
+
+.stop-button:hover {
+    background-color: #ff6666; /* Lighter red on hover */
+}
+
+p {
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.login-form input {
+    width: 200px;
+    padding: 10px;
+    margin: 5px;
+    border-radius: 8px; /* Rounded corners */
+    border: 2px solid #000000; /* Black border */
+}
+
+.login-form button {
+    width: 200px;
+    padding: 15px;
+    margin-top: 10px;
+    border: none;
+    background-color: #4CAF50; /* Green */
+    color: white;
+    cursor: pointer;
+    border-radius: 8px;
+}
+
+.login-form button:hover {
+    background-color: #45a049;
+}
+
+h2 {
+    text-align: center;
+}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>LED Control</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+
+<div class="container">
+    <form accept-charset="utf-8" method="POST" class="button-container">
+        <button class="button" name="TOGGLE LED" value="TOGGLE" type="submit">TOGGLE LED</button>
+    </form>
+
+    <form accept-charset="utf-8" method="POST" class="button-container">
+        <button class="button stop-button" name="STOP" value="STOP_PICO" type="submit">STOP</button>
+    </form>
+
+    <p>LED is {{state}}</p>
+</div>
+
+</body>
+</html>
