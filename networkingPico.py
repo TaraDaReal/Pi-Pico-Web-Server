@@ -1,13 +1,13 @@
 import os
 import time
 import ipaddress
-import wifi
-import socketpool
-import board
-import microcontroller
-from digitalio import DigitalInOut, Direction
-from adafruit_httpserver import Server, Request, Response, POST
-import adafruit_requests
+import wifi # type: ignore
+import socketpool # type: ignore
+import board # type: ignore
+import microcontroller # type: ignore
+from digitalio import DigitalInOut, Direction # type: ignore
+from adafruit_httpserver import Server, Request, Response, POST # type: ignore
+import adafruit_requests # type: ignore
 import sys
 
 ctrlc = 0
@@ -33,6 +33,32 @@ server = Server(pool, "/static",debug=True)
 
 font_family = "monospace"
 
+htmlcache = {}
+
+def cache_html(filename: str, contents: str):
+    htmlcache[filename] = contents
+
+def get_html(filename: str):
+    return htmlcache[filename]
+
+def preload_cache(htmldir: str):
+    try:
+        for filename in os.listdir(htmldir):
+            if filename.endswith(".html"):
+                with open(os.path.join(htmldir, filename), 'r') as f:
+                    cache_html(filename, f.read())
+    except OSError as e:
+        print("Error preloading cache: ", e)
+
+def serve_html(name: str, data: dict):
+    if name in htmlcache:
+        content = get_html(name)
+
+        for var, val in data.items():
+            content = content.replace("{{" + var + "}}", str(val))
+        return str(content)
+
+
 def is_connected():
     try:
         requests = adafruit_requests.Session(pool)
@@ -53,19 +79,10 @@ def connectToWifi(skipCheck=False):
         return
     wifi.radio.connect(ssid, passwd)
 
-def webpage(name: str, vars: dict):
-    path = "./webpage/" + name
-    htmlF = open(path, 'r')
-    html = htmlF.read()
-    htmlF.close()
-
-    for var, val in vars.items():
-        html = html.replace("{{" + var + "}}", str(val))
-    return str(html)
 
 @server.route("/")
 def base(request: Request):
-    return Response(request, webpage('login.html', {'state': led.value}), content_type='text/html')
+    return Response(request, serve_html('login.html', {'state': led.value}), content_type='text/html')
 
 @server.route("/", methods=[POST])
 def changeLED(request: Request):
@@ -73,13 +90,13 @@ def changeLED(request: Request):
     print(raw_text)
     if "TOGGLE" in raw_text:
         led.value = not led.value
-        return Response(request, webpage('index.html', {'state': led.value}), content_type='text/html')
+        return Response(request, serve_html('index.html', {'state': led.value}), content_type='text/html')
     if "STOP_PICO" in raw_text:
         stopChip()
     if "username=admin" in raw_text and "password=admin" in raw_text:
-        return Response(request, webpage('index.html', {'state': led.value}), content_type='text/html')
+        return Response(request, serve_html('index.html', {'state': led.value}), content_type='text/html')
         
-    return Response(request, webpage('login.html', {'state': led.value}), content_type='text/html')
+    return Response(request, serve_html('login.html', {'state': led.value}), content_type='text/html')
 
 def stopChip():
     print("Stopping")
